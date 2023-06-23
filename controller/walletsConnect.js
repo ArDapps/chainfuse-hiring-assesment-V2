@@ -1,4 +1,5 @@
 const detectEthereumProvider = require("@metamask/detect-provider");
+const MetaMaskSDK = require("@metamask/sdk");
 
 // const config = require("../config");
 
@@ -25,6 +26,24 @@ const connectWithMetaMask = async (req, res) => {
     res
       .status(200)
       .send(`YOU ARE NOW CONNECT METAMASK WITH : ${accountAddress}`);
+  } catch (error) {
+    res.status(404).send(`Error connecting MetaMask: ${error.message}`);
+  }
+};
+const connectWithMetaMaskWTHSDK = async (req, res) => {
+  const sdk = new MetaMaskSDK({
+    shouldShimWeb3: false,
+    showQRCode: true,
+  });
+
+  const ethereum = sdk.getProvider();
+
+  try {
+    const accounts = await ethereum.request({
+      method: "eth_requestAccounts",
+      params: [],
+    });
+    res.status(200).send(`YOU ARE NOW CONNECT METAMASK WITH : ${accounts[0]}`);
   } catch (error) {
     res.status(404).send(`Error connecting MetaMask: ${error.message}`);
   }
